@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Echo Tracker</title>
+    <meta name="description" content="Track your Echoes, modifiers and rank in Deepwoken. Plan your run to S or W rank with the full list of Echo Triumphs.">
+    <meta name="theme-color" content="#0a1a1f">
+    <title>Echo Tracker — Deepwoken</title>
     <style>
         :root {
             --bg: #0a1a1f;
@@ -204,17 +206,31 @@
             border-radius: 4px;
             cursor: pointer;
             transition: all 0.2s ease;
+            background: transparent;
+            appearance: none;
+            -webkit-appearance: none;
+            display: inline-block;
+            vertical-align: middle;
+            flex-shrink: 0;
         }
 
-        .custom-checkbox.checked {
+        .custom-checkbox:hover {
+            border-color: var(--checked);
+        }
+
+        .custom-checkbox:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        .custom-checkbox:checked {
             background-color: var(--checked);
             border-color: var(--checked);
         }
 
-        .custom-checkbox::after {
+        .custom-checkbox:checked::after {
             content: '';
             position: absolute;
-            display: none;
             left: 7px;
             top: 3px;
             width: 6px;
@@ -223,10 +239,6 @@
             border-top: 0;
             border-left: 0;
             transform: rotate(45deg);
-        }
-
-        .custom-checkbox.checked::after {
-            display: block;
         }
 
         .task-description {
@@ -368,7 +380,7 @@
 
     <div class="buttons-container">
         <button class="reset-btn" id="resetBtn">Reset All Progress</button>
-        <a href="https://github.com/vonlon-lab/echoesdeepsite" target="_blank" class="github-btn">GitHub</a>
+        <a href="https://github.com/wowori/echoesdeepsite" target="_blank" rel="noopener noreferrer" class="github-btn">GitHub</a>
         <a href="mailto:farkash10@bk.ru" class="contact-btn">Contact</a>
     </div>
 
@@ -397,7 +409,7 @@
             { id: 20, echo: 5, description: "Defeating The Ferryman" },
             { id: 21, echo: 5, description: "Defeating Chaser" },
             { id: 22, echo: 5, description: "Defeating Primadon OR Elder Primadon" },
-            { id: 23, echo: 5, description: "Defeating The Doom of Caeranthil or Interluminary Parasol." },
+            { id: 23, echo: 5, description: "Clear a World Event — Interluminary Parasol OR Doom of Caeranthil OR Carnival of Hearts." },
             { id: 24, echo: 10, description: "Defeating Scion of Ethiron." },
             { id: 25, echo: 10, description: "Completing Hell Mode." },
             { id: 26, echo: 10, description: "Completing Layer 2 floor 1 without Light Hook." },
@@ -406,32 +418,38 @@
         ];
 
         // Modifier data
+        // NOTE: Ironwoken and Vow of Thorns were removed with the Vow of Iron update (Dec 13, 2025).
+        // Source: https://deepwoken.fandom.com/wiki/Echoes
+        // Currently 12 modifiers available, total cumulative 3.1x to Echo gain.
         const modifiers = [
-            { id: 'fragile_heart', name: 'Fragile Heart', effect: 'All incoming mob damage is doubled.', multiplier: 0.5 }, // +50% → 1.5x
-            { id: 'crestfallen', name: 'Crestfallen', effect: 'Your armor is permanently broken.', multiplier: 0.1 }, // +10% → 1.1x
-            { id: 'deep_champion', name: 'Deep Champion', effect: 'Your Depths trial is always corrupted.', multiplier: 0.2 }, // +20% → 1.2x
-            { id: 'dissonant', name: 'Dissonant', effect: 'You are unable to draw forth your Resonance. (You can still obtain one, but you cannot use it.)', multiplier: 0.3 }, // +30% → 1.3x
-            { id: 'hollow', name: 'Hollow', effect: 'All overworld deaths send you to the Depths.', multiplier: 0.1 }, // +10% → 1.1x
-            { id: 'slowburn', name: 'Slowburn', effect: 'All incoming healing is heavily reduced.', multiplier: 0.1 }, // +10% → 1.1x
-            { id: 'dealbreaker', name: 'Dealbreaker', effect: 'You sell items for 25% less.', multiplier: 0.05 }, // +5% → 1.05x
-            { id: 'loose_change', name: 'Loose Change', effect: 'All damage received makes you lose notes on hit.', multiplier: 0.2 }, // +20% → 1.2x
-            { id: 'high_velocity', name: 'High Velocity', effect: 'All fall damage is heavily amplified, allowing you to die from falls much easier.', multiplier: 0.1 }, // +10% → 1.1x
-            { id: 'ironwoken', name: 'Ironwoken', effect: 'You cannot receive notes or items from other players.', multiplier: 0.1 }, // +10% → 1.1x
-            { id: 'one_bit', name: 'One Bit', effect: 'You don\'t know how to swim.', multiplier: 0.2 }, // +20% → 1.2x
-            { id: 'destined', name: 'Destined', effect: 'You don\'t get to choose what you get when your Power increase. Fate picks for you.', multiplier: 0.2 }, // +20% → 1.2x
-            { id: 'vow_of_thorns', name: 'Vow of Thorns', effect: 'Boost the rate of your progression. However, you are faced with harder trials and every death will send you to the depths.', multiplier: 0.05 }, // +5% → 1.05x
-            { id: 'glass_bones', name: 'Glass Bones', effect: 'Taking any damage will immediately knock you. Only pick this if you wish to embark on an unforgiving challenge.', multiplier: 0 } // +0% → 1.0x
+            { id: 'fragile_heart', name: 'Fragile Heart', effect: 'All incoming mob damage is doubled.', multiplier: 0.5 },
+            { id: 'crestfallen', name: 'Crestfallen', effect: 'Your armor is permanently broken.', multiplier: 0.1 },
+            { id: 'deep_champion', name: 'Deep Champion', effect: 'Your Depths trial is always corrupted.', multiplier: 0.2 },
+            { id: 'dissonant', name: 'Dissonant', effect: 'You are unable to draw forth your Resonance. (You can still obtain one, but you cannot use it.)', multiplier: 0.3 },
+            { id: 'hollow', name: 'Hollow', effect: 'All overworld deaths send you to the Depths.', multiplier: 0.1 },
+            { id: 'slowburn', name: 'Slowburn', effect: 'All incoming healing is heavily reduced.', multiplier: 0.1 },
+            { id: 'dealbreaker', name: 'Dealbreaker', effect: 'You sell items for 25% less.', multiplier: 0.05 },
+            { id: 'loose_change', name: 'Loose Change', effect: 'All damage received makes you lose notes on hit.', multiplier: 0.2 },
+            { id: 'high_velocity', name: 'High Velocity', effect: 'All fall damage is heavily amplified, allowing you to die from falls much easier.', multiplier: 0.1 },
+            { id: 'one_bit', name: 'One Bit', effect: 'You don\'t know how to swim.', multiplier: 0.2 },
+            { id: 'destined', name: 'Destined', effect: 'You don\'t get to choose what you get when your Power increases. Fate picks for you.', multiplier: 0.2 },
+            { id: 'glass_bones', name: 'Glass Bones', effect: 'Taking any damage will immediately knock you. Only pick this if you wish to embark on an unforgiving challenge.', multiplier: 0 }
         ];
 
-        // Ranks
+        // Ranks (per https://deepwoken.fandom.com/wiki/Echoes)
+        // Rank is determined by BASE echoes (before modifier multipliers).
+        // W: 140 base + all Echo Triumphs done + every modifier except Glass Bones enabled
+        //     (effective echoes with mods = 427)
+        // S: 140 base + all Echo Triumphs done
+        // A: 112–139, B: 87–111, C: 60–86, D: 30–59, E: 0–29
         const ranks = [
-            { rank: 'W', min: 441, max: Infinity, note: "140 (441 w/ all Echoes Modifiers except Vow of Thorns and Glass Bones)" },
-            { rank: 'S', min: 140, max: Infinity, note: "140 (Must do all Echoes tasks)" },
-            { rank: 'A', min: 112, max: 139, note: "112–139" },
-            { rank: 'B', min: 87, max: 111, note: "87–111" },
-            { rank: 'C', min: 60, max: 86, note: "60–86" },
-            { rank: 'D', min: 30, max: 59, note: "30–59" },
-            { rank: 'E', min: 0, max: 29, note: "0–29" }
+            { rank: 'W', min: 140, max: 140, note: '140 base — requires all Echo Triumphs & every modifier except Glass Bones' },
+            { rank: 'S', min: 140, max: 140, note: '140 base — requires all Echo Triumphs' },
+            { rank: 'A', min: 112, max: 139, note: '112–139' },
+            { rank: 'B', min: 87, max: 111, note: '87–111' },
+            { rank: 'C', min: 60, max: 86, note: '60–86' },
+            { rank: 'D', min: 30, max: 59, note: '30–59' },
+            { rank: 'E', min: 0, max: 29, note: '0–29' }
         ];
 
         // DOM elements
@@ -473,14 +491,26 @@
             localStorage.setItem('echoTracker', JSON.stringify(data));
         }
 
-        // Get rank by echoes
-        function getRank(echoes) {
-            for (let r of ranks) {
-                if (echoes >= r.min && echoes <= r.max) {
+        // Get rank by BASE echoes (no multipliers) and completion state
+        // Ranks A–E are based purely on base echoes.
+        // S additionally requires all Echo Triumphs.
+        // W additionally requires S + every modifier enabled EXCEPT Glass Bones.
+        function getRank(baseEchoes, allTasksDone, allModsExceptGlassBones) {
+            // Check W first (most restrictive)
+            if (baseEchoes >= 140 && allTasksDone && allModsExceptGlassBones) {
+                return ranks[0]; // W
+            }
+            if (baseEchoes >= 140 && allTasksDone) {
+                return ranks[1]; // S
+            }
+            // A through E
+            for (let i = 2; i < ranks.length; i++) {
+                const r = ranks[i];
+                if (baseEchoes >= r.min && baseEchoes <= r.max) {
                     return r;
                 }
             }
-            return ranks[ranks.length - 1]; // E if something goes wrong
+            return ranks[ranks.length - 1]; // E
         }
 
         // Calculate total multiplier
@@ -499,7 +529,7 @@
 
         // Update stats
         function updateStats() {
-            let totalEchoes = 0;
+            let totalEchoes = 0; // base echoes (used for rank)
             let completedCount = 0;
 
             tasks.forEach(task => {
@@ -509,17 +539,30 @@
                 }
             });
 
+            const allTasksDone = completedCount === tasks.length;
+
+            // Total modifier multiplier — game sums them additively (1 + 0.5 + 0.1 + ...)
             const multiplier = getTotalMultiplier();
-            const totalWithModifiers = Math.round(totalEchoes * multiplier);
+            const totalWithModifiers = totalEchoes * multiplier;
 
             totalEchoesEl.textContent = totalEchoes;
-            totalEchoesWithModifiersEl.textContent = totalWithModifiers;
+            totalEchoesWithModifiersEl.textContent = formatEchoes(totalWithModifiers);
             completedTasksEl.textContent = completedCount;
             totalTasksEl.textContent = tasks.length;
 
-            const rank = getRank(totalWithModifiers);
+            // W requires every modifier except Glass Bones enabled
+            const nonGlassModifiers = modifiers.filter(m => m.id !== 'glass_bones');
+            const allModsExceptGlassBones = nonGlassModifiers.every(m => activeModifiers[m.id]);
+
+            const rank = getRank(totalEchoes, allTasksDone, allModsExceptGlassBones);
             currentRankEl.textContent = rank.rank;
             rankRangeEl.textContent = rank.note;
+        }
+
+        // Format echo numbers (Power gives 0.75 per level → 15.0 at Power 20)
+        function formatEchoes(value) {
+            // Round to nearest tenth, mirroring the in-game display rounding
+            return (Math.round(value * 10) / 10).toFixed(1).replace(/\.0$/, '');
         }
 
         // Render tasks table
@@ -528,16 +571,19 @@
 
             tasks.forEach(task => {
                 const row = document.createElement('tr');
-                
+
                 // Checkbox cell
                 const checkboxCell = document.createElement('td');
                 checkboxCell.className = 'checkbox-cell';
                 const checkboxWrapper = document.createElement('div');
                 checkboxWrapper.className = 'checkbox-wrapper';
-                const checkbox = document.createElement('div');
-                checkbox.className = 'custom-checkbox' + (completed[task.id] ? ' checked' : '');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'custom-checkbox';
                 checkbox.dataset.id = task.id;
-                checkbox.addEventListener('click', toggleTask);
+                checkbox.checked = !!completed[task.id];
+                checkbox.setAttribute('aria-label', `Mark task "${task.description}" as done`);
+                checkbox.addEventListener('change', toggleTask);
                 checkboxWrapper.appendChild(checkbox);
                 checkboxCell.appendChild(checkboxWrapper);
 
@@ -567,17 +613,24 @@
                 const item = document.createElement('div');
                 item.className = 'modifier-item';
 
-                const checkbox = document.createElement('div');
-                checkbox.className = 'custom-checkbox' + (activeModifiers[mod.id] ? ' checked' : '');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'custom-checkbox';
+                checkbox.id = `mod-${mod.id}`;
                 checkbox.dataset.id = mod.id;
-                checkbox.addEventListener('click', toggleModifier);
+                checkbox.checked = !!activeModifiers[mod.id];
+                checkbox.setAttribute('aria-label', `${mod.name}: ${mod.effect}`);
 
                 const label = document.createElement('label');
+                label.htmlFor = `mod-${mod.id}`;
                 label.textContent = mod.name;
+                label.title = mod.effect;
 
                 const multiplierSpan = document.createElement('span');
                 multiplierSpan.className = 'multiplier';
                 multiplierSpan.textContent = `+${Math.round(mod.multiplier * 100)}%`;
+
+                checkbox.addEventListener('change', toggleModifier);
 
                 item.appendChild(checkbox);
                 item.appendChild(label);
@@ -590,17 +643,12 @@
         // Toggle task
         function toggleTask(e) {
             const checkbox = e.target;
-            const taskId = parseInt(checkbox.dataset.id);
-            const isChecked = checkbox.classList.contains('checked');
-
-            if (isChecked) {
-                checkbox.classList.remove('checked');
-                delete completed[taskId];
-            } else {
-                checkbox.classList.add('checked');
+            const taskId = parseInt(checkbox.dataset.id, 10);
+            if (checkbox.checked) {
                 completed[taskId] = true;
+            } else {
+                delete completed[taskId];
             }
-
             saveProgress();
             updateStats();
         }
@@ -609,16 +657,7 @@
         function toggleModifier(e) {
             const checkbox = e.target;
             const modId = checkbox.dataset.id;
-            const isChecked = checkbox.classList.contains('checked');
-
-            if (isChecked) {
-                checkbox.classList.remove('checked');
-                activeModifiers[modId] = false;
-            } else {
-                checkbox.classList.add('checked');
-                activeModifiers[modId] = true;
-            }
-
+            activeModifiers[modId] = checkbox.checked;
             saveProgress();
             updateStats();
         }
