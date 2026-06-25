@@ -10,7 +10,7 @@
         :root {
             --bg: #0a1a1f;
             --text: #e0f0f5;
-            --accent: #6ad4ff;
+            --accent: #2596be;
             --border: #1c3d47;
             --hover: #152d35;
             --checked: #00e699;
@@ -30,8 +30,7 @@
             color: var(--text);
             line-height: 1.6;
             padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
+            margin: 0;
             background-image: url('https://static.wikia.nocookie.net/project-deepwoken/images/c/ca/Depths_New_Lightning.png/revision/latest/scale-to-width-down/1000?cb=mod');
             background-size: cover;
             background-position: center;
@@ -41,10 +40,58 @@
             min-height: 100vh;
         }
 
+        /* Two-column app layout: sticky sidebar + scrolling task list */
+        .app-layout {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+            align-items: start;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 20px;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            padding-right: 6px;
+            /* nicer scrollbar on Webkit */
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) transparent;
+        }
+        .sidebar::-webkit-scrollbar { width: 8px; }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 4px;
+        }
+        .sidebar::-webkit-scrollbar-track { background: transparent; }
+
+        .content {
+            min-width: 0; /* allow grid item to shrink below content size */
+        }
+
+        /* Make tasks the scrollable area so the header stays pinned */
+        .tasks-scroll {
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+            border-radius: 8px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent) transparent;
+        }
+        .tasks-scroll::-webkit-scrollbar { width: 10px; }
+        .tasks-scroll::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 5px;
+        }
+        .tasks-scroll::-webkit-scrollbar-track { background: rgba(20, 60, 70, 0.3); }
+
         header {
             text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
+            padding: 16px;
             background: linear-gradient(135deg, rgba(10, 30, 40, 0.8), rgba(5, 20, 30, 0.8));
             border-radius: 10px;
             box-shadow: 0 4px 12px var(--shadow);
@@ -52,114 +99,118 @@
         }
 
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            font-size: 2rem;
+            margin-bottom: 6px;
             color: var(--accent);
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
+        header p { font-size: 0.9rem; opacity: 0.8; }
 
         .stats {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin: 20px 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
 
         .stat-box {
             background: var(--card-bg);
-            padding: 15px 20px;
+            padding: 12px 14px;
             border-radius: 8px;
             text-align: center;
-            min-width: 150px;
+            min-width: 0;
             box-shadow: 0 2px 8px var(--shadow);
             backdrop-filter: blur(2px);
             border: 1px solid rgba(106, 212, 255, 0.2);
         }
 
         .stat-box h3 {
-            font-size: 1.2rem;
-            margin-bottom: 10px;
+            font-size: 0.8rem;
+            margin-bottom: 6px;
             color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .stat-box .value {
-            font-size: 2rem;
+            font-size: 1.6rem;
             font-weight: bold;
             color: var(--accent);
+            line-height: 1.1;
         }
 
         .rank-display {
             background: var(--card-bg);
-            padding: 20px;
+            padding: 14px;
             border-radius: 8px;
             text-align: center;
-            margin: 20px 0;
             box-shadow: 0 2px 8px var(--shadow);
             backdrop-filter: blur(2px);
             border: 1px solid rgba(106, 212, 255, 0.2);
         }
 
         .rank-display .rank {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: bold;
-            margin: 10px 0;
+            margin: 6px 0;
             color: var(--accent);
             text-shadow: 0 0 10px currentColor;
+            line-height: 1;
         }
 
         .rank-display .range {
-            font-size: 1.1rem;
+            font-size: 0.85rem;
             opacity: 0.8;
         }
 
         .modifiers-section {
             background: var(--card-bg);
-            padding: 20px;
+            padding: 14px;
             border-radius: 8px;
-            margin: 20px 0;
             box-shadow: 0 2px 8px var(--shadow);
             backdrop-filter: blur(2px);
             border: 1px solid rgba(106, 212, 255, 0.2);
         }
 
         .modifiers-section h3 {
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             color: var(--accent);
             text-align: center;
+            font-size: 1rem;
         }
 
         .modifier-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
         .modifier-item {
             display: flex;
             align-items: center;
-            padding: 8px;
+            gap: 8px;
+            padding: 6px 8px;
             background: rgba(20, 60, 70, 0.3);
             border-radius: 6px;
             border: 1px solid rgba(106, 212, 255, 0.1);
         }
 
         .modifier-item label {
-            margin-left: 8px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             flex-grow: 1;
+            cursor: pointer;
         }
 
         .modifier-item .multiplier {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--accent);
             font-weight: bold;
+            white-space: nowrap;
         }
 
         .tasks-container {
             background: var(--card-bg);
             border-radius: 8px;
-            overflow: hidden;
+            /* No overflow here — would break sticky thead */
             box-shadow: 0 4px 12px var(--shadow);
             backdrop-filter: blur(2px);
             border: 1px solid rgba(106, 212, 255, 0.2);
@@ -167,21 +218,31 @@
 
         table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
         }
 
         th, td {
-            padding: 12px;
+            padding: 10px 12px;
             text-align: left;
             border-bottom: 1px solid var(--border);
         }
 
         th {
-            background-color: rgba(20, 60, 70, 0.5);
+            background-color: rgba(20, 60, 70, 0.95);
             font-weight: bold;
             position: sticky;
             top: 0;
-            backdrop-filter: blur(2px);
+            backdrop-filter: blur(6px);
+            z-index: 2;
+        }
+
+        /* First column of the header should have rounded top-left corner */
+        th:first-child {
+            border-top-left-radius: 8px;
+        }
+        th:last-child {
+            border-top-right-radius: 8px;
         }
 
         tr:hover {
@@ -243,6 +304,8 @@
 
         .task-description {
             line-height: 1.4;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
 
         .echo-value {
@@ -255,20 +318,18 @@
             background-color: #333;
             color: var(--text);
             border: none;
-            padding: 10px 20px;
+            padding: 9px 16px;
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
-            margin-top: 10px;
             transition: background-color 0.2s;
             backdrop-filter: blur(2px);
             border: 1px solid var(--border);
             display: block;
             width: 100%;
-            max-width: 300px;
-            margin-left: auto;
-            margin-right: auto;
             text-align: center;
+            text-decoration: none;
+            font-size: 0.9rem;
         }
 
         .reset-btn {
@@ -279,18 +340,12 @@
             background-color: #ff5252;
         }
 
-        .github-btn {
-            background-color: #333;
-            margin-top: 10px;
-        }
-
         .github-btn:hover {
             background-color: #444;
         }
 
         .contact-btn {
             background-color: #0077b6;
-            margin-top: 10px;
         }
 
         .contact-btn:hover {
@@ -300,88 +355,105 @@
         .buttons-container {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            margin-top: 20px;
+            gap: 8px;
+        }
+
+        @media (max-width: 900px) {
+            .app-layout {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                position: static;
+                max-height: none;
+            }
+            .tasks-scroll {
+                max-height: none;
+            }
         }
 
         @media (max-width: 768px) {
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .stat-box {
-                min-width: 120px;
-            }
-            
+            body { padding: 12px; }
+            h1 { font-size: 1.6rem; }
+            .stat-box .value { font-size: 1.4rem; }
             th, td {
-                padding: 8px;
+                padding: 8px 10px;
                 font-size: 0.9rem;
             }
-            
-            .modifier-list {
-                grid-template-columns: 1fr;
-            }
+            .rank-display .rank { font-size: 2.2rem; }
+        }
+
+        @media (max-width: 480px) {
+            th, td { padding: 6px 8px; font-size: 0.85rem; }
+            .stat-box { padding: 10px; }
+            .stat-box .value { font-size: 1.25rem; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Echo Tracker</h1>
-        <p>We block, parry and dodge</p>
-    </header>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <header>
+                <h1>Echo Tracker</h1>
+                <p>We block, parry and dodge</p>
+            </header>
 
-    <div class="stats">
-        <div class="stat-box">
-            <h3>Total Echoes</h3>
-            <div class="value" id="totalEchoes">0</div>
-        </div>
-        <div class="stat-box">
-            <h3>With Modifiers</h3>
-            <div class="value" id="totalEchoesWithModifiers">0</div>
-        </div>
-        <div class="stat-box">
-            <h3>Completed</h3>
-            <div class="value" id="completedTasks">0</div>
-        </div>
-        <div class="stat-box">
-            <h3>Total Tasks</h3>
-            <div class="value" id="totalTasks">0</div>
-        </div>
-    </div>
+            <div class="stats">
+                <div class="stat-box">
+                    <h3>Total Echoes</h3>
+                    <div class="value" id="totalEchoes">0</div>
+                </div>
+                <div class="stat-box">
+                    <h3>With Modifiers</h3>
+                    <div class="value" id="totalEchoesWithModifiers">0</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Completed</h3>
+                    <div class="value" id="completedTasks">0</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Total Tasks</h3>
+                    <div class="value" id="totalTasks">0</div>
+                </div>
+            </div>
 
-    <div class="modifiers-section">
-        <h3>Modifiers</h3>
-        <div class="modifier-list" id="modifiersList">
-            <!-- Modifiers will be injected via JS -->
-        </div>
-    </div>
+            <div class="rank-display">
+                <h3>Your Rank</h3>
+                <div class="rank" id="currentRank">E</div>
+                <div class="range" id="rankRange">0–29</div>
+            </div>
 
-    <div class="rank-display">
-        <h3>Your Rank</h3>
-        <div class="rank" id="currentRank">E</div>
-        <div class="range" id="rankRange">0–29</div>
-    </div>
+            <div class="modifiers-section">
+                <h3>Modifiers</h3>
+                <div class="modifier-list" id="modifiersList">
+                    <!-- Modifiers will be injected via JS -->
+                </div>
+            </div>
 
-    <div class="tasks-container">
-        <table id="tasksTable">
-            <thead>
-                <tr>
-                    <th>✅</th>
-                    <th>Echo</th>
-                    <th>Task / Requirement</th>
-                </tr>
-            </thead>
-            <tbody id="tasksBody">
-                <!-- Tasks will be injected via JS -->
-            </tbody>
-        </table>
-    </div>
+            <div class="buttons-container">
+                <button class="reset-btn" id="resetBtn">Reset All Progress</button>
+                <a href="https://github.com/wowori/echoesdeepsite" target="_blank" rel="noopener noreferrer" class="github-btn">GitHub</a>
+                <a href="mailto:farkash10@bk.ru" class="contact-btn">Contact</a>
+            </div>
+        </aside>
 
-    <div class="buttons-container">
-        <button class="reset-btn" id="resetBtn">Reset All Progress</button>
-        <a href="https://github.com/wowori/echoesdeepsite" target="_blank" rel="noopener noreferrer" class="github-btn">GitHub</a>
-        <a href="mailto:farkash10@bk.ru" class="contact-btn">Contact</a>
+        <main class="content">
+            <div class="tasks-scroll">
+                <div class="tasks-container">
+                    <table id="tasksTable">
+                        <thead>
+                            <tr>
+                                <th>✅</th>
+                                <th>Echo</th>
+                                <th>Task / Requirement</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tasksBody">
+                            <!-- Tasks will be injected via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
     </div>
 
     <script>
